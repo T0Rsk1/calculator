@@ -1,0 +1,33 @@
+main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+button{
+    width: 7.5rem;
+    height: 6rem;
+    font-size: 1.5rem;
+}
+
+#calculator{
+    border: black solid;
+}
+
+#display{
+    width: 30rem;
+    height: 10rem;
+    border-bottom: black solid;
+}
+
+#btn-container{
+    display: flex;
+    max-height: 30rem;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+#eval{
+    height: 12rem;
+}
