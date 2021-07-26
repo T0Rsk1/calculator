@@ -60,17 +60,15 @@ function clear(){
 
 function del(){
     disp.textContent = disp.textContent.substring(0, disp.textContent.length - 1);
-    if(disp.textContent === '' || disp.textContent === '-0') disp.textContent = '0';
-    //if(num2 !== '') num1 = disp.textContent;
+    if(disp.textContent[disp.textContent.length-1] === '.')
+        disp.textContent = disp.textContent.substring(0, disp.textContent.length - 1);
+    if(disp.textContent === '' || disp.textContent === '-0' || disp.textContent === '-') 
+        disp.textContent = '0';
 }
 
 digitBtn.forEach(btn => btn.addEventListener('click', () => {
     if(disp.textContent === '0') disp.textContent = '';
     display(btn.textContent);
-    console.log('digitBtn');
-    console.log('num1: ' + num1);
-    console.log('num2: ' + num2);
-    console.log('op: ' + op);
 }));
 
 opBtn.forEach(btn => btn.addEventListener('click', () => {
@@ -85,26 +83,26 @@ opBtn.forEach(btn => btn.addEventListener('click', () => {
         }
     }   
     typing = false;
-    console.log('opBtn');
-    console.log('num1: ' + num1);
-    console.log('num2: ' + num2);
-    console.log('op: ' + op);
 }));
 
 ctrlBtn.forEach(btn => btn.addEventListener('click', () => {
     if(btn.textContent === '='){
         evaluate();
+        num1 = '';
         num2 = '';
         op = '';
     }
     else if(btn.textContent === 'C') clear();
     else del();
-    console.log('ctrlBtn');
-    console.log('num1: ' + num1);
-    console.log('num2: ' + num2);
-    console.log('op: ' + op);
 }));
 
 window.addEventListener('keydown', e => {
     if(e.keyCode === 82) window.location.reload();
 });
+
+/*  
+    console.log('digitBtn');
+    console.log('num1: ' + num1);
+    console.log('num2: ' + num2);
+    console.log('op: ' + op);
+*/
