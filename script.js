@@ -5,7 +5,7 @@ const disp = document.querySelector('#display');
 let num1 = '';
 let num2 = '';
 let op = '';
-let typing = true;
+let reset = false;
 
 function add(x, y){
     return x + y;
@@ -20,6 +20,7 @@ function multiply(x, y){
 }
 
 function divide(x, y){
+    if(y === 0) return null;
     return x / y;
 }
 
@@ -35,19 +36,19 @@ function operate(oper, x, y){
 }
 
 function display(str){
-    if(!typing){
+    if(reset){
         disp.textContent = '';
-        typing = true;
+        reset = false;
     } 
     disp.textContent += str;
 }
 
 function evaluate(){
     if(op === '' || num1 === '') return;
-    num2 = '';
     num2 = disp.textContent;
     num1 = operate(op, num1, num2);
-    typing = false;
+    reset = true;
+    if(num1 === null) return disp.textContent = '>:(';
     display(num1);
 }
 
@@ -58,12 +59,20 @@ function clear(){
     disp.textContent = '0';
 }
 
+function percent(){
+    disp.textContent /= 100;    
+}
+
 function del(){
-    disp.textContent = disp.textContent.substring(0, disp.textContent.length - 1);
+    disp.textContent = delLast(disp.textContent);
     if(disp.textContent[disp.textContent.length-1] === '.')
-        disp.textContent = disp.textContent.substring(0, disp.textContent.length - 1);
+        disp.textContent = delLast(disp.textContent);
     if(disp.textContent === '' || disp.textContent === '-0' || disp.textContent === '-') 
         disp.textContent = '0';
+}   
+
+function delLast(str){
+    return str.substring(0, str.length - 1);
 }
 
 digitBtn.forEach(btn => btn.addEventListener('click', () => {
@@ -72,17 +81,12 @@ digitBtn.forEach(btn => btn.addEventListener('click', () => {
 }));
 
 opBtn.forEach(btn => btn.addEventListener('click', () => {
-    if(typing){
+    if(!reset){
         if(num1 === '') num1 = disp.textContent;
-        if(op === ''){
-            op = btn.textContent;
-        }
-        else {
-            evaluate();
-            op = btn.textContent;
-        }
+        if(op !== '') evaluate();
+        op = btn.textContent;
     }   
-    typing = false;
+    reset = true;
 }));
 
 ctrlBtn.forEach(btn => btn.addEventListener('click', () => {
@@ -93,16 +97,10 @@ ctrlBtn.forEach(btn => btn.addEventListener('click', () => {
         op = '';
     }
     else if(btn.textContent === 'C') clear();
+    else if(btn.textContent === '%') percent();
     else del();
 }));
 
 window.addEventListener('keydown', e => {
     if(e.keyCode === 82) window.location.reload();
 });
-
-/*  
-    console.log('digitBtn');
-    console.log('num1: ' + num1);
-    console.log('num2: ' + num2);
-    console.log('op: ' + op);
-*/
