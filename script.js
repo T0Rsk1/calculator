@@ -44,9 +44,10 @@ function display(str){
 }
 
 function evaluate(){
-    if(op === '' || num1 === '') return;
+    if(num1 === '' || op === '') return;
     num2 = disp.textContent;
     num1 = operate(op, num1, num2);
+    if(num1.toString().length > 11) num1 = resize(num1);
     reset = true;
     if(num1 === null) return disp.textContent = '>:(';
     display(num1);
@@ -56,6 +57,10 @@ function clear(){
     num1 = '';
     num2 = '';
     op = '';
+}
+
+function allClear(){
+    clear();
     disp.textContent = '0';
 }
 
@@ -69,13 +74,38 @@ function del(){
         disp.textContent = delLast(disp.textContent);
     if(disp.textContent === '' || disp.textContent === '-0' || disp.textContent === '-') 
         disp.textContent = '0';
-}   
+}
+
+function resize(x){
+    let str = x.toString();
+    const length = str.length;
+    const prec = 1000000;
+
+    if(str[length-5] === 'e') return 'Big boiii';
+    if(str[length-4] === 'e'){
+        const arr = str.split('e');
+        x = Math.round(arr[0] * prec) / prec;
+        x += 'e' + arr[1];
+    }
+    else {
+        x /= Math.pow(10, length-6);
+        x = Math.round(x) / prec;
+        x += 'e+' + (length - 1);
+    }
+
+    return x;
+}
 
 function delLast(str){
     return str.substring(0, str.length - 1);
 }
 
+function roundDec(x){
+    return Math.round(x * 10000) / 10000;
+}
+
 digitBtn.forEach(btn => btn.addEventListener('click', () => {
+    if(disp.textContent.length > 11 && !reset) return; 
     if(disp.textContent === '0') disp.textContent = '';
     display(btn.textContent);
 }));
@@ -92,11 +122,9 @@ opBtn.forEach(btn => btn.addEventListener('click', () => {
 ctrlBtn.forEach(btn => btn.addEventListener('click', () => {
     if(btn.textContent === '='){
         evaluate();
-        num1 = '';
-        num2 = '';
-        op = '';
+        clear();
     }
-    else if(btn.textContent === 'C') clear();
+    else if(btn.textContent === 'C') allClear();
     else if(btn.textContent === '%') percent();
     else del();
 }));
