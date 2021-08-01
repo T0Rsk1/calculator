@@ -2,6 +2,7 @@ const digitBtn = document.querySelectorAll('.btn-input');
 const opBtn = document.querySelectorAll('.btn-op');
 const ctrlBtn = document.querySelectorAll('.btn-ctrl');
 const disp = document.querySelector('#display');
+const decPrec = 6;
 let num1 = '';
 let num2 = '';
 let op = '';
@@ -45,11 +46,14 @@ function display(str){
 
 function evaluate(){
     if(num1 === '' || op === '') return;
+    reset = true;
     num2 = disp.textContent;
     num1 = operate(op, num1, num2);
-    if(num1.toString().length > 11) num1 = resize(num1);
-    reset = true;
+    console.log(num1);
     if(num1 === null) return disp.textContent = '>:(';
+    let str = num1.toString();
+    if(str.indexOf('.') !== -1 && str.indexOf('e') === -1) num1 = roundDec(num1, decPrec);
+    if(num1.toString().length > 11) num1 = resize(num1);
     display(num1);
 }
 
@@ -78,21 +82,10 @@ function del(){
 
 function resize(x){
     let str = x.toString();
-    const length = str.length;
-    const prec = 1000000;
-
-    if(str[length-5] === 'e') return 'Big boiii';
-    if(str[length-4] === 'e'){
-        const arr = str.split('e');
-        x = Math.round(arr[0] * prec) / prec;
-        x += 'e' + arr[1];
-    }
-    else {
-        x /= Math.pow(10, length-6);
-        x = Math.round(x) / prec;
-        x += 'e+' + (length - 1);
-    }
-
+    if(str.indexOf('e') === -1) str = x.toExponential();
+    str = str.split('e');
+    x = roundDec(str[0], 5);
+    x += 'e' + str[1];
     return x;
 }
 
@@ -100,8 +93,9 @@ function delLast(str){
     return str.substring(0, str.length - 1);
 }
 
-function roundDec(x){
-    return Math.round(x * 10000) / 10000;
+function roundDec(x, p){
+    p = Math.pow(10, p);
+    return Math.round(x * p) / p;
 }
 
 digitBtn.forEach(btn => btn.addEventListener('click', () => {
