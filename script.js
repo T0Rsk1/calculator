@@ -21,7 +21,7 @@ function multiply(x, y){
 }
 
 function divide(x, y){
-    if(y === 0) return null;
+    if(y === 0) return false;
     return x / y;
 }
 
@@ -46,11 +46,14 @@ function display(str){
 
 function evaluate(){
     if(num1 === '' || op === '') return;
+    
     reset = true;
     num2 = disp.textContent;
     num1 = operate(op, num1, num2);
-    console.log(num1);
-    if(num1 === null) return disp.textContent = '>:(';
+
+    if(!num1) return disp.textContent = '>:(';
+    if(num1 === Infinity) return disp.textContent = 'Big BOIIII!!!';
+
     let str = num1.toString();
     if(str.indexOf('.') !== -1 && str.indexOf('e') === -1) num1 = roundDec(num1, decPrec);
     if(num1.toString().length > 11) num1 = resize(num1);
@@ -80,6 +83,10 @@ function del(){
         disp.textContent = '0';
 }
 
+function delLast(str){
+    return str.substring(0, str.length - 1);
+}
+
 function resize(x){
     let str = x.toString();
     if(str.indexOf('e') === -1) str = x.toExponential();
@@ -89,18 +96,16 @@ function resize(x){
     return x;
 }
 
-function delLast(str){
-    return str.substring(0, str.length - 1);
-}
-
 function roundDec(x, p){
     p = Math.pow(10, p);
     return Math.round(x * p) / p;
 }
 
 digitBtn.forEach(btn => btn.addEventListener('click', () => {
-    if(disp.textContent.length > 11 && !reset) return; 
+    if(disp.textContent.length > 11 && !reset) return;
+    if(disp.textContent.indexOf('.') !== -1 && btn.textContent === '.') return; 
     if(disp.textContent === '0') disp.textContent = '';
+    if(disp.textContent === '' && btn.textContent === '.') disp.textContent = '0';
     display(btn.textContent);
 }));
 
