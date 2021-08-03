@@ -2,6 +2,7 @@ const digitBtn = document.querySelectorAll('.btn-input');
 const opBtn = document.querySelectorAll('.btn-op');
 const ctrlBtn = document.querySelectorAll('.btn-ctrl');
 const disp = document.querySelector('#display');
+const maxLength = 11;
 const decPrec = 6;
 let num1 = '';
 let num2 = '';
@@ -21,7 +22,7 @@ function multiply(x, y){
 }
 
 function divide(x, y){
-    if(y === 0) return false;
+    if(y === 0) return null;
     return x / y;
 }
 
@@ -42,22 +43,50 @@ function display(str){
         reset = false;
     } 
     disp.textContent += str;
+    if(disp.textContent === '.') disp.textContent = '0.';
 }
 
 function evaluate(){
     if(num1 === '' || op === '') return;
-    
     reset = true;
     num2 = disp.textContent;
     num1 = operate(op, num1, num2);
-
-    if(!num1) return disp.textContent = '>:(';
+    
+    if(isNaN(num1) || num1 === undefined) return disp.textContent = 'Error';
+    if(num1 === null) return disp.textContent = '>:(';
     if(num1 === Infinity) return disp.textContent = 'Big BOIIII!!!';
-
-    let str = num1.toString();
-    if(str.indexOf('.') !== -1 && str.indexOf('e') === -1) num1 = roundDec(num1, decPrec);
-    if(num1.toString().length > 11) num1 = resize(num1);
+    
+    if(isDecimal(num1)) num1 = roundDec(num1, decPrec);
+    if(num1.toString().length > maxLength) num1 = resize(num1);
+    
     display(num1);
+}
+
+function resize(x){
+    let str = x.toString();
+
+    if(isDecimal(x)){
+        let y = str.length - maxLength+1;
+        str = str.split('.');
+        x = roundDec(x, str[1].length - y);
+        return x;
+    }
+
+    if(str.indexOf('e') === -1) str = x.toExponential();
+    str = str.split('e');
+    x = roundDec(str[0], 5);
+    x += 'e' + str[1];
+    return x;
+}
+
+function roundDec(x, p){
+    p = Math.pow(10, p);
+    return Math.round(x * p) / p;
+}
+
+function isDecimal(x){
+    if(x%1 === 0) return false;
+    return true;
 }
 
 function clear(){
@@ -69,6 +98,7 @@ function clear(){
 function allClear(){
     clear();
     disp.textContent = '0';
+    console.log(reset);
 }
 
 function percent(){
@@ -87,25 +117,12 @@ function delLast(str){
     return str.substring(0, str.length - 1);
 }
 
-function resize(x){
-    let str = x.toString();
-    if(str.indexOf('e') === -1) str = x.toExponential();
-    str = str.split('e');
-    x = roundDec(str[0], 5);
-    x += 'e' + str[1];
-    return x;
-}
-
-function roundDec(x, p){
-    p = Math.pow(10, p);
-    return Math.round(x * p) / p;
-}
-
 digitBtn.forEach(btn => btn.addEventListener('click', () => {
-    if(disp.textContent.length > 11 && !reset) return;
-    if(disp.textContent.indexOf('.') !== -1 && btn.textContent === '.') return; 
-    if(disp.textContent === '0') disp.textContent = '';
-    if(disp.textContent === '' && btn.textContent === '.') disp.textContent = '0';
+    if(!reset){
+        if(disp.textContent.length > maxLength) return;
+        if(disp.textContent.indexOf('.') !== -1 && btn.textContent === '.') return;
+    }
+    if(disp.textContent === '0') reset = true;
     display(btn.textContent);
 }));
 
@@ -113,6 +130,7 @@ opBtn.forEach(btn => btn.addEventListener('click', () => {
     if(!reset){
         if(num1 === '') num1 = disp.textContent;
         if(op !== '') evaluate();
+        num2 = '';
         op = btn.textContent;
     }   
     reset = true;
