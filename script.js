@@ -51,7 +51,7 @@ function evaluate(){
     reset = true;
     num2 = disp.textContent;
     num1 = operate(op, num1, num2);
-    
+
     if(isNaN(num1) || num1 === undefined) return disp.textContent = 'Error';
     if(num1 === null) return disp.textContent = '>:(';
     if(num1 === Infinity) return disp.textContent = 'Big BOIIII!!!';
@@ -59,17 +59,16 @@ function evaluate(){
     if(isDecimal(num1)) num1 = roundDec(num1, decPrec);
     if(num1.toString().length > maxLength) num1 = resize(num1);
     
-    display(num1);
+    display(num1); 
 }
 
 function resize(x){
     let str = x.toString();
-
     if(isDecimal(x)){
-        let y = str.length - maxLength+1;
-        str = str.split('.');
-        x = roundDec(x, str[1].length - y);
-        return x;
+        let y = str.length - maxLength;
+        let arr = str.split('.');
+        console.log('before: ' + x)
+        if(arr[0].length < maxLength) return roundDec(x, arr[1].length - y);
     }
 
     if(str.indexOf('e') === -1) str = x.toExponential();
@@ -98,7 +97,6 @@ function clear(){
 function allClear(){
     clear();
     disp.textContent = '0';
-    console.log(reset);
 }
 
 function percent(){
@@ -129,8 +127,7 @@ digitBtn.forEach(btn => btn.addEventListener('click', () => {
 opBtn.forEach(btn => btn.addEventListener('click', () => {
     if(!reset){
         if(num1 === '') num1 = disp.textContent;
-        if(op !== '') evaluate();
-        num2 = '';
+        if(op !== '')evaluate();
         op = btn.textContent;
     }   
     reset = true;
@@ -138,6 +135,7 @@ opBtn.forEach(btn => btn.addEventListener('click', () => {
 
 ctrlBtn.forEach(btn => btn.addEventListener('click', () => {
     if(btn.textContent === '='){
+        if(reset) return;
         evaluate();
         clear();
     }
@@ -149,3 +147,6 @@ ctrlBtn.forEach(btn => btn.addEventListener('click', () => {
 window.addEventListener('keydown', e => {
     if(e.keyCode === 82) window.location.reload();
 });
+
+// fix bug if num1 is an exponential and a float at same time and too large for screen
+// check for exponential before decimal
