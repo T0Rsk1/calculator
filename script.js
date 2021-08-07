@@ -118,39 +118,58 @@ function delLast(str){
     return str.substring(0, str.length - 1);
 }
 
-digitBtn.forEach(btn => btn.addEventListener('click', () => {
+function convertCtrl(key){
+    if(key === 'Enter') return '=';
+    if(key === 'c') return 'C';
+}
+
+function handleDigit(btn){
     if(!reset){
         if(disp.textContent.length >= maxLength) return;
-        if(disp.textContent.indexOf('.') !== -1 && btn.textContent === '.') return;
+        if(disp.textContent.indexOf('.') !== -1 && btn === '.') return;
     }
     if(disp.textContent === '0') reset = true;
 
-    display(btn.textContent);
-}));
+    display(btn);
+}
 
-opBtn.forEach(btn => btn.addEventListener('click', () => {
+function handleOp(btn){
     if(!reset){
         if(num1 === '') num1 = disp.textContent;
         if(op !== '') evaluate();
-        op = btn.textContent;
+        op = btn;
     }   
     reset = true;
-}));
+}
 
-ctrlBtn.forEach(btn => btn.addEventListener('click', () => {
-    if(btn.textContent === '='){
+function handleCtrl(btn){
+    if(btn === '='){
         if(reset) return;
         evaluate();
         clear();
     }
-    else if(btn.textContent === 'C') allClear();
+    else if(btn === 'C') allClear();
     else del();
-}));
+}
 
-document.addEventListener('keydown', e => {
-    
-});
+function handleKey(e){
+    const opMap = ['+', '-', '*', '/', '%'];
+    const ctrlMap = ['Enter', 'c', 'Backspace'];
+
+    if(e.key >= '0' && e.key <= '9' || e.key === '.') handleDigit(e.key);
+    else if(opMap.indexOf(e.key) !== -1) handleOp(e.key);
+    else if(ctrlMap.indexOf(e.key) !== -1) handleCtrl(convertCtrl(e.key));
+}
+
+digitBtn.forEach(btn => btn.addEventListener('click', () => handleDigit(btn.textContent)));
+
+opBtn.forEach(btn => btn.addEventListener('click', () => handleOp(btn.textContent)));
+
+ctrlBtn.forEach(btn => btn.addEventListener('click', () => handleCtrl(btn.textContent)));
+
+document.addEventListener('keydown', handleKey);
 
 window.addEventListener('keydown', e => {
     if(e.code === 'KeyR') window.location.reload();
 });
+
