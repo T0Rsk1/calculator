@@ -1,6 +1,6 @@
 :root{
     --border-color: rgba(17, 0, 250, 0.774); 
-    --number-color: rgb(167, 0, 0);
+    --number-color: rgb(255, 0, 0);
 }
 
 body{
@@ -16,8 +16,9 @@ main{
 }
 
 button{
-    width: 7.5rem;
-    height: 6rem;
+    margin: 0.188rem;
+    width: 5.5rem;
+    height: 4rem;
     font-size: 1.5rem;
     border: var(--border-color) solid;
     border-radius: 2.3rem;
@@ -25,7 +26,12 @@ button{
     color: var(--number-color);
 }
 
+button:hover{
+    color: rgb(132, 0, 255);
+}
+
 #calculator{
+    width: 25rem;
     border: var(--border-color) solid thick;
 }
 
@@ -33,21 +39,21 @@ button{
     display: flex;
     justify-content: flex-end;
     align-items: flex-end;
-    width: 30rem;
+    width: 25rem;
     height: 9rem;
-    font-size: 4rem;
-    border-bottom: var(--border-color) solid;
+    font-size: 3.4rem;
+    border-bottom: var(--border-color) solid thick;
     background: black;
     color: var(--number-color);
 }
 
 #btn-container{
     display: flex;
-    max-height: 30rem;
+    max-height: 25rem;
     flex-direction: column;
     flex-wrap: wrap;
 }
 
 .btn-large{
-    height: 12rem;
+    height: 8.4rem;
 }
