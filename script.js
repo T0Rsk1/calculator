@@ -52,7 +52,7 @@ function display(str){
 }
 
 function evaluate(){
-    if(num1 === '' || op === '') return;
+    if(!num1 || !op) return;
 
     reset = true;
     num2 = disp.textContent;
@@ -70,8 +70,8 @@ function resize(x){
     let str = x.toString();
 
     if(isDecimal(x)){
-        let y = str.length - maxLength;
-        let arr = str.split('.');
+        const y = str.length - maxLength;
+        const arr = str.split('.');
         if(arr[0].length <= maxLength) return roundDec(x, arr[1].length - y);
     }
 
@@ -124,19 +124,21 @@ function convertCtrl(key){
 }
 
 function handleDigit(btn){
+    const { textContent } = disp
+
     if(!reset){
-        if(disp.textContent.length >= maxLength) return;
-        if(disp.textContent.indexOf('.') !== -1 && btn === '.') return;
+        if(textContent.length >= maxLength) return;
+        if(textContent.indexOf('.') !== -1 && btn === '.') return;
     }
-    if(disp.textContent === '0') reset = true;
+    if(textContent === '0') reset = true;
 
     display(btn);
 }
 
 function handleOp(btn){
     if(!reset){
-        if(num1 === '') num1 = disp.textContent;
-        if(op !== '') evaluate();
+        if(!num1) num1 = disp.textContent;
+        if(op) evaluate();
         op = btn;
     }   
     reset = true;
@@ -168,8 +170,3 @@ opBtn.forEach(btn => btn.addEventListener('click', () => handleOp(btn.textConten
 ctrlBtn.forEach(btn => btn.addEventListener('click', () => handleCtrl(btn.textContent)));
 
 document.addEventListener('keydown', handleKey);
-
-window.addEventListener('keydown', e => {
-    if(e.code === 'KeyR') window.location.reload();
-});
-
