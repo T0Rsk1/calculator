@@ -110,7 +110,7 @@ function del(){
     if(disp.textContent[disp.textContent.length-1] === '.')
         disp.textContent = delLast(disp.textContent);
 
-    if(disp.textContent === '' || disp.textContent === '-0' || disp.textContent === '-') 
+    if(!disp.textContent || disp.textContent === '-0' || disp.textContent === '-') 
         disp.textContent = '0';
 }
 
@@ -124,13 +124,11 @@ function convertCtrl(key){
 }
 
 function handleDigit(btn){
-    const { textContent } = disp
-
     if(!reset){
-        if(textContent.length >= maxLength) return;
-        if(textContent.indexOf('.') !== -1 && btn === '.') return;
+        if(disp.textContent.length >= maxLength) return;
+        if(disp.textContent.indexOf('.') !== -1 && btn === '.') return;
     }
-    if(textContent === '0') reset = true;
+    if(disp.textContent === '0') reset = true;
 
     display(btn);
 }
