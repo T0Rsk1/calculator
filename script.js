@@ -1,8 +1,10 @@
 const digitBtn = document.querySelectorAll('.btn-digit');
 const opBtn = document.querySelectorAll('.btn-op');
 const ctrlBtn = document.querySelectorAll('.btn-ctrl');
+const buttons = document.querySelectorAll('button');
 const disp = document.querySelector('#display');
 const maxLength = 15;
+const ctrlMap = ['Enter', 'c', 'Backspace'];
 let num1 = '';
 let num2 = '';
 let op = '';
@@ -32,12 +34,14 @@ function percent(x, y){
 function operate(oper, x, y){
     x = +x;
     y = +y;
+
     const operations =
     {'+': add(x, y),
      '-': subtract(x, y),
      '*': multiply(x, y),
      '/': divide(x, y),
      '%': percent(x, y)};
+
      return operations[oper];
 }
 
@@ -72,7 +76,8 @@ function resize(x){
     if(isDecimal(x)){
         const y = str.length - maxLength;
         const arr = str.split('.');
-        if(arr[0].length <= maxLength) return roundDec(x, arr[1].length - y);
+        if(arr[0].length <= maxLength)
+            return roundDec(x, arr[1].length - y);
     }
 
     if(str.indexOf('e') === -1) str = x.toExponential();
@@ -121,6 +126,7 @@ function delLast(str){
 function convertCtrl(key){
     if(key === 'Enter') return '=';
     if(key === 'c') return 'C';
+    return 'DEL'
 }
 
 function handleDigit(btn){
@@ -154,11 +160,34 @@ function handleCtrl(btn){
 
 function handleKey(e){
     const opMap = ['+', '-', '*', '/', '%'];
-    const ctrlMap = ['Enter', 'c', 'Backspace'];
 
     if(e.key >= '0' && e.key <= '9' || e.key === '.') handleDigit(e.key);
     else if(opMap.indexOf(e.key) !== -1) handleOp(e.key);
     else if(ctrlMap.indexOf(e.key) !== -1) handleCtrl(convertCtrl(e.key));
+}
+
+function keyDown(e, btn){
+    if(e.key === '=') return;
+
+    let key = e.key;
+
+    if(ctrlMap.indexOf(key) !== -1)
+        key = convertCtrl(key); 
+
+    if(btn.textContent === key){
+        btn.classList.add('hover');
+        handleKey(e);
+    }
+}
+
+function keyUp(e, btn){
+    let key = e.key;
+
+    if(ctrlMap.indexOf(key) !== -1)
+        key = convertCtrl(key);
+        
+    if(btn.textContent === key)
+        btn.classList.remove('hover'); 
 }
 
 digitBtn.forEach(btn => btn.addEventListener('click', () => handleDigit(btn.textContent)));
@@ -167,4 +196,9 @@ opBtn.forEach(btn => btn.addEventListener('click', () => handleOp(btn.textConten
 
 ctrlBtn.forEach(btn => btn.addEventListener('click', () => handleCtrl(btn.textContent)));
 
-document.addEventListener('keydown', handleKey);
+buttons.forEach(btn => {
+    btn.addEventListener('mouseover', () => btn.classList.add('hover'));
+    btn.addEventListener('mouseout', () => btn.classList.remove('hover'));
+    document.addEventListener('keydown', e => keyDown(e, btn));
+    document.addEventListener('keyup', e => keyUp(e, btn));
+});

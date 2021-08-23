@@ -10,11 +10,11 @@ body{
 }
 
 h1{
-    color:rgb(132, 0, 255);
+    color: rgb(132, 0, 255);
     justify-content: center;
-    font-size: calc(var(--size) * 2.65rem);
-    margin-bottom: calc(var(--size) * 3rem);
-    text-decoration: underline;
+    font-family: 'Permanent Marker', cursive;
+    font-size: calc(var(--size) * 3.2rem);
+    margin-bottom: calc(var(--size) * 1.7rem);
 }
 
 main{
@@ -37,7 +37,7 @@ button{
     transition: transform 0.2s;
 }
 
-button:hover{
+.hover{
     color: rgb(0, 247, 255);
     transform: scale(0.95);
 }
